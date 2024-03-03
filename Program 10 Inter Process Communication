@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+struct message {
+    long mtype;
+    char mtext[1024];
+};
+int main() {
+    int msqid;
+    key_t key;
+    struct message msg;
+    // Generate a unique key
+    key = ftok("message_queue_example", 1234);
+    // Create a message queue
+    msqid = msgget(key, IPC_CREAT | 0666);
+    // Send a message to the message queue
+    msg.mtype = 1;
+    printf("Enter a message to send: ");
+    fgets(msg.mtext, sizeof(msg.mtext), stdin);
+    msgsnd(msqid, &msg, sizeof(msg.mtext), 0);
+    // Receive a message from the message queue
+    msgrcv(msqid, &msg, sizeof(msg.mtext), 1, 0);
+    printf("Message received: %s\n", msg.mtext);
+    // Delete the message queue
+    msgctl(msqid, IPC_RMID, NULL);
+    return 0;
+}
