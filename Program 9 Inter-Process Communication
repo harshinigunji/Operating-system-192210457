@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#define SHM_SIZE 1024
+int main() {
+    int shmid;
+    key_t key;
+    char *shared_memory;
+    char message[SHM_SIZE];
+    key = ftok("shared_memory_example", 1234);
+    shmid = shmget(key, SHM_SIZE, IPC_CREAT | 0666);
+    shared_memory = (char *)shmat(shmid, NULL, 0);
+    printf("Enter a message to write to shared memory: ");
+    fgets(message, SHM_SIZE, stdin);
+    snprintf(shared_memory, SHM_SIZE, "%s", message);
+    printf("Message read from shared memory: %s\n", shared_memory);
+    shmdt(shared_memory);
+    shmctl(shmid, IPC_RMID, NULL);
+    return 0;
+}
