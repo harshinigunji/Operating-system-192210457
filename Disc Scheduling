@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+int main() {
+    int n, head, i, j, temp, seek_time = 0, distance, current_track;
+    printf("Enter the number of requests: ");
+    scanf("%d", &n);
+    printf("Enter the position of head: ");
+    scanf("%d", &head);
+    int requests[n+1];
+    printf("Enter the request queue: ");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &requests[i]);
+    }
+    requests[n] = head;
+    n++;
+    // Sort the request queue in ascending order
+    for (i = 0; i < n-1; i++) {
+        for (j = i+1; j < n; j++) {
+            if (requests[i] > requests[j]) {
+                temp = requests[i];
+                requests[i] = requests[j];
+                requests[j] = temp;
+            }
+        }
+    }
+    // Find the position of head in the sorted request queue
+    for (i = 0; i < n; i++) {
+        if (head == requests[i]) {
+            break;
+        }
+    }
+    // Calculate the total seek time
+    for (j = i; j >= 0; j--) {
+        printf("%d ", requests[j]);
+        seek_time += abs(requests[j] - current_track);
+        current_track = requests[j];
+    }
+    seek_time += abs(current_track - 0);
+    current_track = 0;
+    for (j = i+1; j < n; j++) {
+        printf("%d ", requests[j]);
+        seek_time += abs(requests[j] - current_track);
+        current_track = requests[j];
+    }
+    printf("\nTotal seek time: %d\n", seek_time);
+    return 0;
+}
