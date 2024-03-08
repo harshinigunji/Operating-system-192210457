@@ -1,0 +1,52 @@
+#include<semaphore.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<pthread.h>
+sem_t x,y;
+pthread_t tid;
+pthread_t philospherthreads[100],diningthreads[100];
+int readercount;
+void *Philospher(void* param)
+{
+    sem_wait(&x);
+    readercount++;
+    if(readercount==1)
+    sem_wait(&y);
+    sem_post(&x);
+    printf("\n%d Philosher is entering ",readercount);
+    sem_wait(&x);
+    readercount--;
+    if(readercount==0)
+    {
+        sem_post(&y);
+    }
+    sem_post(&x);
+    printf("\n%d Philosher is leaving",readercount+1);
+}
+void *Dining(void* param)
+{
+    printf("\nPhiloshper picks the chopstick");
+    sem_wait(&y);
+    printf("\nPhilosher is having dinner");
+    sem_post(&y);
+    printf("\nWriter is leaving");
+}
+int main()
+{
+    int n,i;
+    printf("Enter the number of philosphers:");
+    scanf("%d",&n);
+    int n1[n];
+    sem_init(&x,0,1);
+    sem_init(&y,0,1);
+    for(i=0;i<n;i++)
+    {
+        pthread_create(&philospherthreads[i],NULL,Philospher,NULL);
+        pthread_create(&diningthreads[i],NULL,Dining,NULL);
+    }
+    for(i=0;i<n;i++)
+    {
+        pthread_join(philospherthreads[i],NULL);
+        pthread_join(diningthreads[i],NULL);
+    }
+}
