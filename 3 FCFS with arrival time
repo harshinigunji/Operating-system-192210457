@@ -38,5 +38,15 @@ int main() {
     for (int i = 0; i < n; i++) {
         printf("%d\t%d\t\t%d\t\t%d\t\t%d\t\t%d\n", processes[i].id, processes[i].arrivalTime, processes[i].burstTime, processes[i].completionTime, processes[i].waitingTime, processes[i].turnaroundTime);
     }
-    return 0;
+    double averageWaitingTime = 0;
+	double averageTurnaroundTime = 0;
+	for (int i = 0; i < n; i++) {
+	    averageWaitingTime += processes[i].waitingTime;
+        averageTurnaroundTime += processes[i].turnaroundTime;
+		}
+		averageWaitingTime /= n;
+		averageTurnaroundTime /= n;
+		printf("Average Waiting Time: %.2lf\n", averageWaitingTime);
+		printf("Average Turnaround Time: %.2lf\n", averageTurnaroundTime);
+		return 0;
 }
